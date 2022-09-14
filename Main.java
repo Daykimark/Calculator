@@ -1,8 +1,10 @@
+import java.util.Scanner;
 import java.util.StringTokenizer;
 
 public class Main {
     public static void main(String[] args) throws CalcException {
-        System.out.print(calc("VII / II"));
+        Scanner scanner = new Scanner(System.in);
+        System.out.print(calc(scanner.nextLine()));
     }
     public static String calc(String input) throws CalcException {
         boolean mode = getMode(input);
@@ -15,8 +17,11 @@ public class Main {
             }
             return IntToRim(compute(first, second, input));
         }
-        int first = tokenizer.nextToken().charAt(0) - 48;
-        int second = tokenizer.nextToken().charAt(0) - 48;
+        int first = Integer.parseInt(tokenizer.nextToken());
+        int second = Integer.parseInt(tokenizer.nextToken());
+        if (first == 0 || second == 0 || second > 10 || first > 10) {
+            throw new CalcException("Wrong Decimal Expression");
+        }
         return compute(first, second, input).toString();
     }
 
@@ -29,7 +34,7 @@ public class Main {
                 sum += getIntDigit(number.charAt(i));
             }
         }
-        if (sum > 9) {
+        if (sum > 10) {
             throw new CalcException("Wrong Rome Expression");
         }
         return sum;
@@ -42,17 +47,11 @@ public class Main {
             case 'X' -> 10;
             case 'L' -> 50;
             case 'C' -> 100;
-            case 'D' -> 500;
-            case 'M' -> 1000;
             default -> throw new CalcException("Wrong Rome Expression");
         };
     }
 
     public static String IntToRim (int number) {
-        if (number >= 1000) return "M" + IntToRim(number - 1000);
-        if (number >= 900) return "CM" + IntToRim(number - 900);
-        if (number >= 500) return "D" + IntToRim(number - 500);
-        if (number >= 400) return "CD" + IntToRim(number - 400);
         if (number >= 100) return "C" + IntToRim(number - 100);
         if (number >= 90) return "XC" + IntToRim(number - 90);
         if (number >= 50) return "L" + IntToRim(number - 50);
@@ -66,8 +65,8 @@ public class Main {
     }
 
     public static boolean getMode(String input) throws CalcException {
-        if (input.matches("^[XIV]{1,3} [+/\\*-] [XIV]{1,3}$")) return true;
-        else if (input.matches("^\\d{1,3} [+/\\*-] \\d{1,3}$")) return false;
+        if (input.matches("^[XIV]{1,3} [+/*-] [XIV]{1,3}$")) return true;
+        else if (input.matches("^\\d{1,2} [+/*-] \\d{1,2}$")) return false;
         throw new CalcException("Wrong Expression");
     }
 
@@ -81,7 +80,6 @@ public class Main {
                 return first * second;
             }
         }
-        if (second == 0) throw new CalcException("Wrong Decimal Expression");
         return first / second;
     }
 }
